@@ -18,7 +18,6 @@ var appController = (function(uiCntrllr, fnCntrllr) {
     cntrlAddItem();
   });
   document.addEventListener("keypress", function(event) {
-    console.log(event);
     if (event.keyCode === 13 || event.which === 13) {
       cntrlAddItem();
     }
