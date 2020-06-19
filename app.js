@@ -5,6 +5,8 @@ var uiController = (function() {
     InputDescription: ".add__description",
     InputValue: ".add__value",
     addBtn: ".add__btn",
+    incomeList: ".income__list",
+    expenseList: ".expenses__list",
   };
   return {
     getInput: function() {
@@ -18,16 +20,32 @@ var uiController = (function() {
     getDOMstrings: function() {
       return DOMstrings;
     },
+    clearFields: function() {
+      var fields = document.querySelectorAll(
+        DOMstrings.InputDescription + ", " + DOMstrings.InputValue
+      );
+      // Convert List to Array
+      var fieldsArr = Array.prototype.slice.call(fields);
 
+      for (var i = 0; i < fieldsArr.length; i++) {
+        fieldsArr[i].value = "";
+      }
+      fieldsArr[0].focus();
+      /* for dawtalttai adil , forEach => Element bureer ni dawtana
+      fieldsArr.forEach(function(el, index, array) {
+        el.value = "";
+      });
+      */
+    },
     addListItem: function(item, type) {
       // Орлого зарлагын элемэнтийг агуулсан HTML-г бэлтгэнэ
       var html, list;
       if (type === "inc") {
-        list = ".income__list";
+        list = DOMstrings.incomeList;
         html =
           '<div class="item clearfix" id="income-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">+$VALUE$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       } else {
-        list = ".expenses__list";
+        list = DOMstrings.expenseList;
         html =
           '<div class="item clearfix" id="expense-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       }
@@ -96,6 +114,7 @@ var appController = (function(uiCntrllr, fnCntrllr) {
     item = fnCntrllr.addItems(input.type, input.description, input.value);
     // Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
     uiCntrllr.addListItem(item, input.type);
+    uiCntrllr.clearFields();
     // Төсвийг тооцоолно
     // Эцсийн үлдэгдэл тооцоог дэлгэцэнд гаргана
   };
