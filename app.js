@@ -13,7 +13,8 @@ var uiController = (function() {
       return {
         type: document.querySelector(DOMstrings.InputType).value,
         description: document.querySelector(DOMstrings.InputDescription).value,
-        value: document.querySelector(DOMstrings.InputValue).value,
+        // parseInt функц нь тэмдэгтийг тооруу хөрвүүлнэ
+        value: parseInt(document.querySelector(DOMstrings.InputValue).value),
       };
     },
 
@@ -110,13 +111,15 @@ var appController = (function(uiCntrllr, fnCntrllr) {
   var cntrlAddItem = function() {
     // Оруулсан өгөгдлийг дэлгэцнээс олж авна
     var input = uiCntrllr.getInput();
-    // Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална
-    item = fnCntrllr.addItems(input.type, input.description, input.value);
-    // Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
-    uiCntrllr.addListItem(item, input.type);
-    uiCntrllr.clearFields();
-    // Төсвийг тооцоолно
-    // Эцсийн үлдэгдэл тооцоог дэлгэцэнд гаргана
+    if (input.description !== "" && input.value !== "") {
+      // Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална
+      item = fnCntrllr.addItems(input.type, input.description, input.value);
+      // Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
+      uiCntrllr.addListItem(item, input.type);
+      uiCntrllr.clearFields();
+      // Төсвийг тооцоолно
+      // Эцсийн үлдэгдэл тооцоог дэлгэцэнд гаргана
+    }
   };
   var setupEventListener = function() {
     var DOM = uiCntrllr.getDOMstrings();
