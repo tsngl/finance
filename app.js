@@ -7,7 +7,12 @@ var uiController = (function() {
     addBtn: ".add__btn",
     incomeList: ".income__list",
     expenseList: ".expenses__list",
+    IncLabel: ".budget__income--value",
+    ExpLabel: ".budget__expenses--value",
+    tusuwLabel: ".budget__value",
+    percentageLabel: ".budget__expenses--percentage",
   };
+
   return {
     getInput: function() {
       return {
@@ -56,6 +61,21 @@ var uiController = (function() {
       html = html.replace("$VALUE$", item.value);
       // Бэлтгэсэн HTML  ээ ДОМ-руу хийж өгнө
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
+    },
+    ViewFinance: function(tusuv) {
+      document.querySelector(DOMstrings.IncLabel).textContent =
+        "+" + tusuv.totalInc;
+      document.querySelector(DOMstrings.ExpLabel).textContent =
+        "-" + tusuv.totalExp;
+      document.querySelector(DOMstrings.tusuwLabel).textContent =
+        "+" + tusuv.tusuw;
+      if (tusuv.percentage !== 0) {
+        document.querySelector(DOMstrings.percentageLabel).textContent =
+          tusuv.percentage + "%";
+      } else {
+        document.querySelector(DOMstrings.percentageLabel).textContent =
+          tusuv.percentage;
+      }
     },
   };
 })();
@@ -151,7 +171,7 @@ var appController = (function(uiCntrllr, fnCntrllr) {
       // Эцсийн үлдэгдэлийг тооцоолно
       var tusuw = fnCntrllr.tusuwAwah();
       //Төсвийн тооцоог дэлгэцэнд гаргана
-      console.log(tusuw);
+      uiCntrllr.ViewFinance(tusuw);
     }
   };
   var setupEventListener = function() {
@@ -169,6 +189,12 @@ var appController = (function(uiCntrllr, fnCntrllr) {
   return {
     init: function() {
       console.log("Application started ...");
+      uiCntrllr.ViewFinance({
+        tusuw: 0,
+        percentage: 0,
+        totalInc: 0,
+        totalExp: 0,
+      });
       setupEventListener();
     },
   };
