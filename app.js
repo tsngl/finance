@@ -82,6 +82,17 @@ var financeController = (function() {
       inc: 0,
       exp: 0,
     },
+    tusuw: 0,
+    percentage: 0,
+  };
+
+  var calculateTotal = function(type) {
+    var sum = 0;
+    data.items[type].forEach(function(el) {
+      sum = sum + el.value;
+    });
+
+    data.totals[type] = sum;
   };
 
   return {
@@ -102,6 +113,24 @@ var financeController = (function() {
       data.items[type].push(item);
       return item;
     },
+    tusuwTootsooloh: function() {
+      // Нийт орлогын нийлбэрйиг тооцоолно
+      calculateTotal("inc");
+      //Нийт зарлагын нийлбэрийг тооцоолно
+      calculateTotal("exp");
+      // Өрхийн төсвийг шинээр тооцоолно
+      data.tusuw = data.totals.inc - data.totals.exp;
+      // Зарлагын хувийг тооцоолно
+      data.percentage = Math.round((data.totals.exp * 100) / data.totals.inc);
+    },
+    tusuwAwah: function() {
+      return {
+        tusuw: data.tusuw,
+        percentage: data.percentage,
+        totalInc: data.totals.inc,
+        totalExp: data.totals.exp,
+      };
+    },
   };
   0;
 })();
@@ -118,7 +147,11 @@ var appController = (function(uiCntrllr, fnCntrllr) {
       uiCntrllr.addListItem(item, input.type);
       uiCntrllr.clearFields();
       // Төсвийг тооцоолно
-      // Эцсийн үлдэгдэл тооцоог дэлгэцэнд гаргана
+      fnCntrllr.tusuwTootsooloh();
+      // Эцсийн үлдэгдэлийг тооцоолно
+      var tusuw = fnCntrllr.tusuwAwah();
+      //Төсвийн тооцоог дэлгэцэнд гаргана
+      console.log(tusuw);
     }
   };
   var setupEventListener = function() {
