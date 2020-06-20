@@ -65,6 +65,10 @@ var uiController = (function() {
       // Бэлтгэсэн HTML  ээ ДОМ-руу хийж өгнө
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
     },
+    deleteListItem: function(id) {
+      var el = document.getElementById(id);
+      el.parentNode.removeChild(el);
+    },
     ViewFinance: function(tusuv) {
       document.querySelector(DOMstrings.IncLabel).textContent =
         "+" + tusuv.totalInc;
@@ -211,7 +215,8 @@ var appController = (function(uiCntrllr, fnCntrllr) {
 
           //Санхүүгийн модулиас type, id ашиглан устгана
           fnCntrllr.deleteItem(type, itemId);
-          //
+          // Дэлгэцээс энэ id-тай элемэнтийг устгана
+          uiCntrllr.deleteListItem(id);
         }
       });
   };
