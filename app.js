@@ -185,13 +185,17 @@ var appController = (function(uiCntrllr, fnCntrllr) {
       // Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
       uiCntrllr.addListItem(item, input.type);
       uiCntrllr.clearFields();
-      // Төсвийг тооцоолно
-      fnCntrllr.tusuwTootsooloh();
-      // Эцсийн үлдэгдэлийг тооцоолно
-      var tusuw = fnCntrllr.tusuwAwah();
-      //Төсвийн тооцоог дэлгэцэнд гаргана
-      uiCntrllr.ViewFinance(tusuw);
+
+      updateTusuw();
     }
+  };
+  var updateTusuw = function() {
+    // Төсвийг тооцоолно
+    fnCntrllr.tusuwTootsooloh();
+    // Эцсийн үлдэгдэлийг тооцоолно
+    var tusuw = fnCntrllr.tusuwAwah();
+    //Төсвийн тооцоог дэлгэцэнд гаргана
+    uiCntrllr.ViewFinance(tusuw);
   };
   var setupEventListener = function() {
     var DOM = uiCntrllr.getDOMstrings();
@@ -217,6 +221,8 @@ var appController = (function(uiCntrllr, fnCntrllr) {
           fnCntrllr.deleteItem(type, itemId);
           // Дэлгэцээс энэ id-тай элемэнтийг устгана
           uiCntrllr.deleteListItem(id);
+          // Төсвийн тооцоог шинээр дэлгэцэнд гаргах
+          updateTusuw();
         }
       });
   };
