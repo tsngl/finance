@@ -11,6 +11,7 @@ var uiController = (function() {
     ExpLabel: ".budget__expenses--value",
     tusuwLabel: ".budget__value",
     percentageLabel: ".budget__expenses--percentage",
+    expensePercentage: ".item__percentage",
   };
 
   return {
@@ -53,12 +54,13 @@ var uiController = (function() {
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
+          '<div class="item clearfix" id="expense-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">1%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       }
       // Тэр HTML дотроо орлого зарлагын утгуудыг replace ашиглан өөрчилөх
       html = html.replace("%id%", item.id);
       html = html.replace("%DESCRIPTION%", item.description);
       html = html.replace("$VALUE$", item.value);
+      //html = html.replace("##PERCENTAGE##", percentage);
       // Бэлтгэсэн HTML  ээ ДОМ-руу хийж өгнө
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
     },
@@ -128,10 +130,20 @@ var financeController = (function() {
         item = new Income(id, desc, val);
       } else {
         item = new Expense(id, desc, val);
+        ///  percent = (data.items.exp.value * 100) / data.totals.inc;
       }
 
       data.items[type].push(item);
       return item;
+    },
+    deleteItem: function(type, id) {
+      var ids = data.items[type].map(function(el) {
+        return el.id;
+      });
+      var index = ids.indexOf(id);
+      if (index !== -1) {
+        data.items[type].slice(index, 1);
+      }
     },
     tusuwTootsooloh: function() {
       // Нийт орлогын нийлбэрйиг тооцоолно
@@ -152,7 +164,6 @@ var financeController = (function() {
       };
     },
   };
-  0;
 })();
 
 // Connection Controller Modul / Програмын холбогч контроллер
