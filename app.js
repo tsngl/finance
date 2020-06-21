@@ -15,6 +15,12 @@ var uiController = (function() {
     containerDiv: ".container",
   };
 
+  var nodeListForEach = function(list, callback) {
+    for (var i = 0; i < list.length; i++) {
+      callback(list[i], i);
+    }
+  };
+
   return {
     getInput: function() {
       return {
@@ -23,6 +29,16 @@ var uiController = (function() {
         // parseInt функц нь тэмдэгтийг тооруу хөрвүүлнэ
         value: parseInt(document.querySelector(DOMstrings.InputValue).value),
       };
+    },
+
+    displayPercentage: function(allPercentages) {
+      //Зарлагын NodeList-г олох
+      var elements = document.querySelectorAll(DOMstrings.expensePercentage);
+
+      // Элемэнт болгоны хувьд зарлагын хувийг массиваас авч шивж оруулах
+      nodeListForEach(elements, function(el, index) {
+        el.textContent = allPercentages[index] + "%";
+      });
     },
 
     getDOMstrings: function() {
@@ -55,13 +71,12 @@ var uiController = (function() {
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">1%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">##PERCENTAGE##</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       }
       // Тэр HTML дотроо орлого зарлагын утгуудыг replace ашиглан өөрчилөх
       html = html.replace("%id%", item.id);
       html = html.replace("%DESCRIPTION%", item.description);
       html = html.replace("$VALUE$", item.value);
-      //html = html.replace("##PERCENTAGE##", percentage);
       // Бэлтгэсэн HTML  ээ ДОМ-руу хийж өгнө
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
     },
@@ -222,6 +237,7 @@ var appController = (function(uiCntrllr, fnCntrllr) {
     //Элемэнтүүдийн хувийг хүлээж авна
     var allPercentages = fnCntrllr.getPercentages();
     //Эдгээр хувийг дэлгэцэнд гаргана
+    uiCntrllr.displayPercentage(allPercentages);
   };
   var setupEventListener = function() {
     var DOM = uiCntrllr.getDOMstrings();
