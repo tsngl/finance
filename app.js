@@ -98,6 +98,15 @@ var financeController = (function() {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+  Expense.prototype.calcPercentage = function(totalIncome) {
+    if (totalIncome > 0)
+      this.percentage = Math.round((this.value * 100) / totalIncome);
+    else this.percentage = 0;
+  };
+  Expense.prototype.getPercentage = function() {
+    return this.percentage;
   };
 
   var data = {
@@ -135,7 +144,6 @@ var financeController = (function() {
         item = new Income(id, desc, val);
       } else {
         item = new Expense(id, desc, val);
-        ///  percent = (data.items.exp.value * 100) / data.totals.inc;
       }
 
       data.items[type].push(item);
@@ -158,7 +166,9 @@ var financeController = (function() {
       // Өрхийн төсвийг шинээр тооцоолно
       data.tusuw = data.totals.inc - data.totals.exp;
       // Зарлагын хувийг тооцоолно
-      data.percentage = Math.round((data.totals.exp * 100) / data.totals.inc);
+      if (data.totals.inc > 0)
+        data.percentage = Math.round((data.totals.exp * 100) / data.totals.inc);
+      else data.percentage = 0;
     },
     tusuwAwah: function() {
       return {
@@ -167,6 +177,17 @@ var financeController = (function() {
         totalInc: data.totals.inc,
         totalExp: data.totals.exp,
       };
+    },
+    calculatePercentages: function() {
+      data.items.exp.forEach(function(el) {
+        el.calcPercentage(data.totals.inc);
+      });
+    },
+    getPercentages: function() {
+      var allPercentages = data.items.exp.map(function(el) {
+        return el.getPercentage();
+      });
+      return allPercentages;
     },
     seeData: function() {
       return data;
@@ -196,6 +217,11 @@ var appController = (function(uiCntrllr, fnCntrllr) {
     var tusuw = fnCntrllr.tusuwAwah();
     //Төсвийн тооцоог дэлгэцэнд гаргана
     uiCntrllr.ViewFinance(tusuw);
+    //Элемэнтүүдийн хувийг тооцоолно
+    fnCntrllr.calculatePercentages();
+    //Элемэнтүүдийн хувийг хүлээж авна
+    var allPercentages = fnCntrllr.getPercentages();
+    //Эдгээр хувийг дэлгэцэнд гаргана
   };
   var setupEventListener = function() {
     var DOM = uiCntrllr.getDOMstrings();
