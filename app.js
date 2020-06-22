@@ -58,6 +58,19 @@ var uiController = (function() {
         value: parseInt(document.querySelector(DOMstrings.InputValue).value),
       };
     },
+    changeType: function() {
+      var fields = document.querySelectorAll(
+        DOMstrings.InputType +
+          ", " +
+          DOMstrings.InputDescription +
+          "," +
+          DOMstrings.InputValue
+      );
+      nodeListForEach(fields, function(el) {
+        el.classList.toggle("red-focus");
+      });
+      document.querySelector(DOMstrings.addBtn).classList.toggle("red");
+    },
 
     displayDate: function() {
       var today = new Date();
@@ -297,6 +310,9 @@ var appController = (function(uiCntrllr, fnCntrllr) {
         cntrlAddItem();
       }
     });
+    document
+      .querySelector(DOM.InputType)
+      .addEventListener("change", uiCntrllr.changeType);
     document
       .querySelector(DOM.containerDiv)
       .addEventListener("click", function(event) {
