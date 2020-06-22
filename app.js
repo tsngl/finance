@@ -13,12 +13,40 @@ var uiController = (function() {
     percentageLabel: ".budget__expenses--percentage",
     expensePercentage: ".item__percentage",
     containerDiv: ".container",
+    dateLabel: ".budget__title--month",
   };
 
   var nodeListForEach = function(list, callback) {
     for (var i = 0; i < list.length; i++) {
       callback(list[i], i);
     }
+  };
+
+  var formatMoney = function(number, type) {
+    number = "" + number;
+    var x = number
+      .split("")
+      .reverse()
+      .join("");
+
+    var y = "";
+    var count = 1;
+
+    for (var i = 0; i < x.length; i++) {
+      y = y + x[i];
+      if (count % 3 === 0) y = y + ",";
+      count++;
+    }
+
+    var z = y
+      .split("")
+      .reverse()
+      .join("");
+
+    if (z[0] === ",") z = z.substr(1, z.length - 1);
+    if (type === "inc") z = "+ " + z;
+    else z = "- " + z;
+    return z;
   };
 
   return {
@@ -29,6 +57,15 @@ var uiController = (function() {
         // parseInt функц нь тэмдэгтийг тооруу хөрвүүлнэ
         value: parseInt(document.querySelector(DOMstrings.InputValue).value),
       };
+    },
+
+    displayDate: function() {
+      var today = new Date();
+      document.querySelector(DOMstrings.dateLabel).textContent =
+        today.getFullYear() +
+        " оны " +
+        today.getMonth() +
+        " сарын өрхийн санхүү";
     },
 
     displayPercentage: function(allPercentages) {
@@ -67,16 +104,16 @@ var uiController = (function() {
       if (type === "inc") {
         list = DOMstrings.incomeList;
         html =
-          '<div class="item clearfix" id="inc-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">+$VALUE$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">$VALUE$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">-$VALUE$</div><div class="item__percentage">##PERCENTAGE##</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">$VALUE$</div><div class="item__percentage">##PERCENTAGE##</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">-</i></button></div></div></div>';
       }
       // Тэр HTML дотроо орлого зарлагын утгуудыг replace ашиглан өөрчилөх
       html = html.replace("%id%", item.id);
       html = html.replace("%DESCRIPTION%", item.description);
-      html = html.replace("$VALUE$", item.value);
+      html = html.replace("$VALUE$", formatMoney(item.value, type));
       // Бэлтгэсэн HTML  ээ ДОМ-руу хийж өгнө
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
     },
@@ -85,12 +122,22 @@ var uiController = (function() {
       el.parentNode.removeChild(el);
     },
     ViewFinance: function(tusuv) {
-      document.querySelector(DOMstrings.IncLabel).textContent =
-        "+" + tusuv.totalInc;
-      document.querySelector(DOMstrings.ExpLabel).textContent =
-        "-" + tusuv.totalExp;
-      document.querySelector(DOMstrings.tusuwLabel).textContent =
-        "+" + tusuv.tusuw;
+      var type;
+      if (tusuv.tusuw > 0) type = "inc";
+      else type = "exp";
+
+      document.querySelector(DOMstrings.IncLabel).textContent = formatMoney(
+        tusuv.totalInc,
+        "inc"
+      );
+      document.querySelector(DOMstrings.ExpLabel).textContent = formatMoney(
+        tusuv.totalExp,
+        "exp"
+      );
+      document.querySelector(DOMstrings.tusuwLabel).textContent = formatMoney(
+        tusuv.tusuw,
+        type
+      );
       if (tusuv.percentage !== 0) {
         document.querySelector(DOMstrings.percentageLabel).textContent =
           tusuv.percentage + "%";
@@ -271,6 +318,7 @@ var appController = (function(uiCntrllr, fnCntrllr) {
   return {
     init: function() {
       console.log("Application started ...");
+      uiCntrllr.displayDate();
       uiCntrllr.ViewFinance({
         tusuw: 0,
         percentage: 0,
